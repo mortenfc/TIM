@@ -1,0 +1,123 @@
+a.navbar-brand {
+    color: black;
+    text-decoration: none;
+    font-weight:bold; 
+    margin-left: 20px; 
+    font-size:22px;    
+}
+
+nav.navbar-cern {
+    height: 60px;
+    box-shadow: 0 5px 5px #CCC;  
+    background-color: white;
+}
+
+@media (min-width: 768px) {
+    div.header_bar {
+        height: 40px;
+        line-height: 40px;
+        padding-left: 40px;
+    }
+
+    nav.navbar-cern {
+        padding-left: 40px;
+    }
+
+    li.nav-item {
+        text-align: center;
+        width: 120px;
+        height: 60px;
+        font-size:12px;
+        line-height: 60px;
+        text-transform: uppercase;
+        font-weight: bold;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        color: #666;
+        border-bottom:2px solid white;
+    }
+
+    li.nav-item:hover {
+        border-bottom:2px solid #71C2BB;
+    }
+
+    li.nav-item.disabled:hover {
+        border-bottom:0px;
+        pointer-events: none;
+    }
+
+    li.nav-item.active > a.nav-link {
+        color: black;
+    }
+
+    li.nav-item > a.nav-link {
+        padding: 0px;
+        color: #666;
+    }
+
+    li.nav-item > a.nav-link.disabled {
+        padding: 0px;
+        color: #AAA;
+        pointer-events: none;
+    }
+}
+
+@media (max-width: 768px) {
+
+    div.header_bar {
+        height: 30px;
+        line-height: 30px;
+        padding-left: 0px;
+    }
+
+    span.navbar-toggler-icon {
+        background: url("../media/png/menu-icon.png");
+        background-size: 100% 100%;
+    }
+
+    button.navbar-toggler:focus {
+        border: none;
+        outline: none;
+    }
+    
+    div.navbar-collapse {
+        box-shadow: 0 5px 5px #CCC;  
+        background-color: white;
+        z-index:15;
+    }
+
+
+    li.nav-item {
+        height: 60px;
+        margin-left:10px;
+    }
+
+    li.nav-item.dropdown {
+        margin-right:10px;
+    }
+
+    div.dropdown-menu {
+        background-color: white;
+    }
+
+    a.nav-link {
+        color: black;
+        font-weight: bold;
+    }
+}
+
+a.dropdown-item {
+    line-height: 30px;
+    text-transform: none;
+    font-size: 14px;
+}
+
+div#train-selector {
+    padding-left: 10px;
+    padding-right:10px;
+}
+
+div#train-selector > select {
+    width:100%;
+}

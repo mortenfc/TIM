@@ -1,0 +1,145 @@
+app.controller("tim-levelspage",  ['$scope', '$rootScope', '$interval', '$http',  'GlobalVars', function($scope, $rootScope, $interval, $http, GlobalVars) {	
+    /* Cancel all the intervals of the other controllers */
+    $interval.cancel ($rootScope.mainpageInterval);
+	$interval.cancel ($rootScope.camerasInterval);  
+    $interval.cancel ($rootScope.rppageInterval);
+    
+	$scope.chartLiveOxygen =  Highcharts.chart('chart-liveoxygenpage', {
+		chart: {
+			type: 'line',
+			animation: false,
+		},
+		series: [
+			{
+				data: [],
+				id: 'series1',
+				animation: false,
+				name: "Oxygen",
+				marker : {
+					enabled: true,
+					symbol: 'circle',
+					radius: 3
+				}
+			}
+		],
+		title : {
+			style : {
+				display : 'none'
+			}
+		},
+		yAxis: [{ 
+			title: {
+				text: 'Oxygen level [%]',
+			},
+			floor: 0,
+			min: 0,
+			max: 100,
+		}],
+		legend: {
+			enabled: false
+		},
+		tooltip: {
+			shared: true,
+			crosshairs: true
+		},
+		credits: {
+     		enabled: false
+  		},
+		responsive: {
+			rules: [{
+				condition: {
+				}
+			}]
+		}
+	});
+
+	$scope.chartLiveTemperature = Highcharts.chart('chart-livetemperaturepage', {
+		chart: {
+			type: 'line',
+			animation: false,
+		},
+		series: [
+			{
+				data: [],
+				id: 'series1',
+				animation: false,
+				name: "Temperature",
+				marker : {
+					enabled: true,
+					symbol: 'circle',
+					radius: 3
+				}
+			}
+		],
+		title : {
+			style : {
+				display : 'none'
+			}
+		},
+		yAxis: [{ 
+			title: {
+				text: 'Temperature ['+String.fromCharCode(176)+'C]',
+			},
+			floor: 0,
+			min: 0,
+			max: 60,
+		}],
+		legend: {
+			enabled: false
+		},
+		tooltip: {
+			shared: true,
+			crosshairs: true
+		},
+		credits: {
+     		enabled: false
+  		},
+		responsive: {
+			rules: [{
+				condition: {
+				}
+			}]
+		}
+	});
+
+	$scope.chartLiveOxygen.showLoading();
+	$scope.chartLiveTemperature.showLoading();
+
+	$scope.update_charts = function () {	
+	
+		$http.get("model/send_request.php?tim_id="+GlobalVars.SelectedTIM+"&data=oxy_history")
+		.then(function(response) {
+			var chart_data= [];
+			for (i=0; i<response.data.History.length; i++) {
+				chart_data.push([response.data.History[i].Position, response.data.History[i].Value]);
+			}
+			if ($('#chart-liveoxygenpage').length > 0){
+				$('#chart-liveoxygenpage').highcharts().series[0].setData(chart_data, true);
+				$scope.chartLiveOxygen.hideLoading();
+			}
+		});
+
+		$http.get("model/send_request.php?tim_id="+GlobalVars.SelectedTIM+"&data=temp_history")
+		.then(function(response) {
+			var chart_data= [];
+			for (i=0; i<response.data.History.length; i++) {
+				chart_data.push([response.data.History[i].Position, response.data.History[i].Value]);
+			}
+			if ($('#chart-livetemperaturepage').length > 0){
+				$('#chart-livetemperaturepage').highcharts().series[0].setData(chart_data, true);
+				$scope.chartLiveTemperature.hideLoading();
+			}
+		});
+	};
+
+    $scope.update_charts();
+
+    $rootScope.levelspageInterval = $interval(function() {
+        $scope.update_charts();
+    },  2000);
+
+    $rootScope.$on('update_event', function(event,args) {
+        $scope.update_charts();
+    });
+    
+}])

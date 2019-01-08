@@ -1,0 +1,149 @@
+app.controller("tim-rppage",  ['$scope', '$rootScope', '$interval', '$http',  'GlobalVars', function($scope, $rootScope, $interval, $http, GlobalVars) {	
+    /* Cancel all the intervals of the other controllers */
+    $interval.cancel($rootScope.mainpageInterval);
+	$interval.cancel ($rootScope.camerasInterval);  
+    $interval.cancel($rootScope.levelspageInterval);
+	
+	$scope.trains = GlobalVars.Trains;
+	$scope.charts_initialized = false;
+    $scope.charts = [];
+	/*$scope.chartLiveRp = Highcharts.chart('chart-liverppage', {
+		chart: {
+			type: 'line',
+			animation: false,
+		},
+		series: [
+			{
+				data: [],
+				id: 'series1',
+				animation: false,
+				name: "Radiation",
+				marker : {
+					enabled: true,
+					symbol: 'circle',
+					radius: 3
+				}
+			}
+		],
+		title : {
+			style : {
+				display : 'none'
+			}
+		},
+		yAxis: [{ 
+			title: {
+				text: 'Radiation level [uSv/h]',
+			},
+			floor: 0,
+			min: 0
+		}],
+		legend: {
+			enabled: false
+		},
+		tooltip: {
+			shared: true,
+			crosshairs: true
+		},
+		credits: {
+     		enabled: false
+  		},
+		responsive: {
+			rules: [{
+				condition: {
+				}
+			}]
+		},
+	});*/
+
+	/*$scope.chartLiveRp.showLoading();
+	
+*/
+	$scope.initialize_chart = function(train) {
+		var chart = Highcharts.chart('chart-liverppage-' + train.value, {
+			chart: {
+				type: 'line',
+				animation: false,
+			},
+			series: [
+				{
+					data: [],
+					id: 'series1',
+					animation: false,
+					name: "Radiation",
+					marker : {
+						enabled: true,
+						symbol: 'circle',
+						radius: 3
+					}
+				}
+			],
+			title : {
+				style : {
+					display : 'none'
+				}
+			},
+			yAxis: [{ 
+				title: {
+					text: 'Radiation level [uSv/h]',
+				},
+				floor: 0,
+				min: 0
+			}],
+			legend: {
+				enabled: false
+			},
+			tooltip: {
+				shared: true,
+				crosshairs: true
+			},
+			credits: {
+				enabled: false
+			},
+			responsive: {
+				rules: [{
+					condition: {
+					}
+				}]
+			},
+		});
+		
+		$scope.charts.push(chart);
+	}
+
+	$scope.update_charts = function () {	
+		if (!$scope.charts_initialized) {
+			for (i=0; i<$scope.trains.length; i++) {
+				$scope.initialize_chart($scope.trains[i]);
+			}
+			$scope.charts_initialized = true;
+		}
+		
+		angular.forEach($scope.trains, function(train,index) {
+			$http.get("model/send_request.php?tim_id="+train.value+"&data=rp_history")
+			.then(function(response) {
+				var chart_data= [];
+				for (i=0; i<response.data.History.length; i++) {
+					chart_data.push([response.data.History[i].Position, response.data.History[i].Value]);
+				}
+
+				if ($('#chart-liverppage-'+$scope.trains[index].value).length > 0){
+					$('#chart-liverppage-'+$scope.trains[index].value).highcharts().series[0].setData(chart_data, true);
+				}
+				
+				$scope.charts[index].hideLoading();
+			});
+		});
+	};
+
+    $rootScope.rppageInterval = $interval(function() {
+        $scope.update_charts();
+    },  2000);
+
+    $rootScope.$on('update_event', function(event,args) {
+        $scope.update_charts();
+    });
+	
+	
+	
+    
+}])

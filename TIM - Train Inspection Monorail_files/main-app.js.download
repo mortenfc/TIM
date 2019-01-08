@@ -1,0 +1,348 @@
+app.controller("tim-mainpage-status", ['$scope', '$rootScope', '$http', 'GlobalVars', function($scope, $rootScope, $http, GlobalVars) {
+	$scope.update_train_information = function () {
+		
+		$http.get("model/send_request.php?tim_id="+GlobalVars.SelectedTIM+"&data=train_status")
+		.then(function(response) {
+			if (response.data.IsOnline.Value.toLowerCase() == "false") {
+				GlobalVars.SelectedTIMOnline = 0;
+			} else {
+				GlobalVars.SelectedTIMOnline = 1;
+			}
+			
+			$scope.tim_position = response.data.Position.Value + " " + response.data.Position.Unit;
+			$scope.tim_velocity = parseFloat(response.data.Velocity.Value).toFixed(2) + " " + response.data.Velocity.Unit ;
+			$scope.tim_battery_level = parseFloat(response.data.BatteryLevel.Value) + " " + response.data.BatteryLevel.Unit;
+			$scope.tim_temperature = response.data.Temperature.Value + " " + response.data.Temperature.Unit;					
+			
+			if (response.data.RP.Value == "N/A")  {
+				$scope.tim_rp = response.data.RP.Value;
+			} else {
+				$scope.tim_rp = parseFloat(response.data.RP.Value).toFixed(2) + " " +response.data.RP.Unit;	
+			}
+			
+			if (response.data.Oxygen.Value == "N/A") {
+				$scope.tim_oxygen = response.data.Oxygen.Value;
+			} else {
+				$scope.tim_oxygen = parseFloat(response.data.Oxygen.Value).toFixed(2) + " " + response.data.Oxygen.Unit;	
+			}			
+			
+			if (GlobalVars.SelectedTIMOnline) {
+				$scope.tim_status = response.data.Status.Value;				
+			} else {
+				$scope.tim_status = "Offline";
+			}
+			$scope.tim_arm_status = response.data.ArmStatus.Value;
+			
+			if (response.data.EconomyMode.Value.toLowerCase() == "false") {
+				GlobalVars.SelectedTIMEconomy = 0;
+			} else {
+				GlobalVars.SelectedTIMEconomy = 1;
+			}
+			
+			
+			if (response.data.IsOnline.Value.toLowerCase() == "false") {
+				GlobalVars.SelectedTIMOnline = 0;
+			} else {
+				GlobalVars.SelectedTIMOnline = 1;
+			}
+			
+		})
+	};
+}])
+
+app.controller("tim-mainpage-cameras", ['$scope', '$rootScope', '$http', 'GlobalVars', function($scope, $rootScope, $http, GlobalVars) {
+	$scope.update_images = function () {
+		if (GlobalVars.SelectedTIMEconomy == -1) {
+			$scope.front_camera = "media/gif/Loading_icon.gif";
+			$scope.back_camera = "media/gif/Loading_icon.gif";
+		} else if (GlobalVars.SelectedTIMOnline == 0) { 
+			$scope.front_camera = "media/jpg/nocommunication.jpg";
+			$scope.back_camera = "media/jpg/nocommunication.jpg";
+		} else if (GlobalVars.SelectedTIMEconomy == 0) {
+			$scope.front_camera = "model/send_request.php?tim_id="+GlobalVars.SelectedTIM+"&data=camera&camera_id=0&"+ new Date().getTime();
+			$scope.back_camera = "model/send_request.php?tim_id="+GlobalVars.SelectedTIM+"&data=camera&camera_id=1&"+ new Date().getTime();
+		} else if (GlobalVars.SelectedTIMEconomy == 1) {
+			$scope.front_camera = "media/jpg/economymode.jpg";
+			$scope.back_camera = "media/jpg/economymode.jpg";
+		};
+	};
+}])
+
+app.controller("tim-mainpage-charts", ['$scope', '$rootScope', '$http', 'GlobalVars', function($scope, $rootScope, $http, GlobalVars) {	
+	$scope.chartLiveRp = Highcharts.chart('chart-liverp', {
+		chart: {
+			type: 'line',
+			animation: false,
+		},
+		series: [
+			{
+				data: [],
+				id: 'series1',
+				animation: false,
+				name: "Radiation",
+				marker : {
+					enabled: true,
+					symbol: 'circle',
+					radius: 3
+				}
+			},
+		],
+		title : {
+			style : {
+				display : 'none'
+			}
+		},
+		yAxis: [{ 
+			title: {
+				text: 'Radiation level [uSv/h]',
+			},
+			floor: 0,
+			min: 0
+		}],
+		legend: {
+			enabled: false
+		},
+		tooltip: {
+			shared: true,
+			crosshairs: true
+		},
+		credits: {
+     		enabled: false
+  		},
+		responsive: {
+			rules: [{
+				condition: {
+					maxHeight: 200
+				}
+			}]
+		},
+		lang: {
+			style: {
+				zIndex: 5
+			}
+		}
+	});
+
+
+	$scope.chartLiveOxygen =  Highcharts.chart('chart-liveoxygen', {
+		chart: {
+			type: 'line',
+			animation: false,
+		},
+		series: [
+			{
+				data: [],
+				id: 'series1',
+				animation: false,
+				name: "Oxygen",
+				marker : {
+					enabled: true,
+					symbol: 'circle',
+					radius: 3
+				}
+			}
+		],
+		title : {
+			style : {
+				display : 'none'
+			}
+		},
+		yAxis: [{ 
+			title: {
+				text: 'Oxygen level [%]',
+			},
+			floor: 0,
+			min: 0,
+			max: 100,
+		}],
+		legend: {
+			enabled: false
+		},
+		tooltip: {
+			shared: true,
+			crosshairs: true
+		},
+		credits: {
+     		enabled: false
+  		},
+		responsive: {
+			rules: [{
+				condition: {
+					maxHeight: 200
+				}
+			}]
+		},
+		lang: {
+		}
+	});
+
+	$scope.chartLiveTemperature = Highcharts.chart('chart-livetemperature', {
+		chart: {
+			type: 'line',
+			animation: false,
+		},
+		series: [
+			{
+				data: [],
+				id: 'series1',
+				animation: false,
+				name: "Temperature",
+				marker : {
+					enabled: true,
+					symbol: 'circle',
+					radius: 3
+				}
+			}
+		],
+		title : {
+			style : {
+				display : 'none'
+			}
+		},
+		yAxis: [{ 
+			title: {
+				text: 'Temperature ['+String.fromCharCode(176)+'C]',
+			},
+			floor: 0,
+			min: 0,
+			max: 60,
+		}],
+		legend: {
+			enabled: false
+		},
+		tooltip: {
+			shared: true,
+			crosshairs: true
+		},
+		credits: {
+     		enabled: false
+  		},	
+		responsive: {
+			rules: [{
+				condition: {
+					maxHeight: 200
+				}
+			}]
+		}
+	});
+
+	/*$scope.chartLiveRp.showLoading();
+	$scope.chartLiveOxygen.showLoading();
+	$scope.chartLiveTemperature.showLoading();*/
+	
+	$scope.previousSelectedTim = -1;
+
+	$scope.update_charts = function () {	
+		if ((GlobalVars.SelectedTIMEconomy == 0)&&(GlobalVars.SelectedTIMOnline==1)) {
+			$http.get("model/send_request.php?tim_id="+GlobalVars.SelectedTIM+"&data=rp_history")
+			.then(function(response) {
+				var chart_data= [];
+				for (i=0; i<response.data.History.length; i++) {
+					chart_data.push([response.data.History[i].Position, response.data.History[i].Value]);
+				}
+				
+				chart_data.sort(function(a,b) {return a[0]-b[0];});
+								
+				if ($('#chart-liverp').length > 0){
+					$('#chart-liverp').highcharts().series[0].setData(chart_data, true, null, false);
+				}
+
+				//$scope.chartLiveRp.hideLoading();
+			});
+		} else {
+			if ($('#chart-liverp').length > 0){
+				$('#chart-liverp').highcharts().series[0].data = [];
+			};
+		}
+
+		if ((GlobalVars.SelectedTIMEconomy == 0)&&(GlobalVars.SelectedTIMOnline==1)) {
+			$http.get("model/send_request.php?tim_id="+GlobalVars.SelectedTIM+"&data=oxy_history")
+			.then(function(response) {
+				var chart_data= [];
+				for (i=0; i<response.data.History.length; i++) {
+					chart_data.push([response.data.History[i].Position, response.data.History[i].Value]);
+				}
+				
+				chart_data.sort(function(a,b) {return a[0]-b[0];});
+				
+				if ($('#chart-liveoxygen').length > 0){
+					$('#chart-liveoxygen').highcharts().series[0].setData(chart_data, true, null, false);
+				}
+			});
+		} else {
+			if ($('#chart-liveoxygen').length > 0){
+				$('#chart-liveoxygen').highcharts().series[0].data = [];
+			};
+		}
+
+		$http.get("model/send_request.php?tim_id="+GlobalVars.SelectedTIM+"&data=temp_history")
+		.then(function(response) {
+			var chart_data= [];
+			for (i=0; i<response.data.History.length; i++) {
+				chart_data.push([response.data.History[i].Position, response.data.History[i].Value]);
+			}
+			
+			chart_data.sort(function(a,b) {return a[0]-b[0];});
+			
+			if ($('#chart-livetemperature').length > 0){
+				$('#chart-livetemperature').highcharts().series[0].setData(chart_data, true, null, false);
+			}
+		});
+	};
+}])
+
+app.controller("tim-mainpage", ['$scope', '$rootScope', '$controller', '$interval', '$http', 'GlobalVars', function($scope, $rootScope, $controller, $interval, $http, GlobalVars) {
+	/* Cancel all the intervals of the other controllers */
+	$interval.cancel ($rootScope.camerasInterval);  
+	$interval.cancel ($rootScope.rppageInterval);  
+	$interval.cancel($rootScope.levelspageInterval);
+
+	$controller("tim-mainpage-status", {$scope: $scope, $rootScope : $rootScope, $http : $http, GlobalVars: GlobalVars});
+	$controller("tim-mainpage-cameras", {$scope: $scope, $rootScope : $rootScope, $http : $http, GlobalVars: GlobalVars});
+	$controller("tim-mainpage-charts", {$scope: $scope, $rootScope : $rootScope, $http : $http, GlobalVars: GlobalVars});
+
+	$scope.update_train_information();
+    $scope.update_images();
+	$scope.update_charts();
+	
+	$scope.tim_position = "Loading ...";
+	$scope.tim_battery_level = "Loading ...";
+	$scope.tim_temperature = "Loading ...";
+	$scope.tim_velocity = "Loading ...";
+	$scope.tim_oxygen = "Loading ...";
+	$scope.tim_status = "Loading ...";
+	$scope.tim_rp = "Loading ...";
+	$scope.tim_arm_status = "Loading ...";
+	
+	$scope.selectedTIM = GlobalVars.SelectedTIM;
+
+	$scope.loading = function() {							//Loading the parameters before iniatialize it
+		$scope.tim_position = "Loading ...";
+		$scope.tim_battery_level = "Loading ...";
+		$scope.tim_temperature = "Loading ...";
+		$scope.tim_velocity = "Loading ...";
+		$scope.tim_oxygen = "Loading ...";
+		$scope.tim_status = "Loading ...";
+		$scope.tim_rp = "Loading ...";
+		$scope.tim_arm_status = "Loading ...";
+	};
+
+	$rootScope.mainpageInterval = $interval(function() {
+		$scope.update_train_information();
+        $scope.update_images();
+        $scope.update_charts();
+		
+		$scope.selectedTIM = GlobalVars.SelectedTIM;
+	},  2000);
+	
+	$rootScope.$on('update_event', function(event,args) {
+		$scope.selectedTIM = GlobalVars.SelectedTIM;
+
+		$scope.update_train_information();
+		$scope.loading();
+        $scope.update_images();
+		$scope.update_charts();
+	});
+}]);
+
+

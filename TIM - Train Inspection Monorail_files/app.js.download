@@ -1,0 +1,70 @@
+var app = angular.module("timlhcApp", ["ngRoute"]);
+var update_time = 2000;
+var offset_time = update_time/10;
+
+app.value ('GlobalVars', {
+    SelectedTIM : 2,
+    SelectedTIMEconomy : -1,
+    SelectedTIMOnline : 0,
+    TrainsMap: null,
+	Trains: [
+		{ name : "TIM 2" , value : 2},
+		{ name : "TIM 3" , value : 3}
+	]
+})
+
+app.config(function($routeProvider, $locationProvider) {
+    $routeProvider
+    .when("/", {
+        templateUrl : "view/main.php"
+    })
+    .when("/cameras", {
+        templateUrl : "view/cameras.php"
+    }).when("/rp", {
+        templateUrl : "view/rp.php"
+    }).when("/levels", {
+        templateUrl : "view/levels.php"
+    }).when("/database", {
+        templateUrl : "view/database.php"
+    });
+	
+	$locationProvider.html5Mode(true);
+});
+
+app.controller("tim_selector", ['$scope', '$rootScope', '$http','GlobalVars', function ($scope, $rootScope, $http, GlobalVars) {
+	$scope.trains = GlobalVars.Trains;
+	
+	
+	$scope.timid = $scope.trains[0];
+	
+	$scope.change = function () {
+		GlobalVars.SelectedTIM = $scope.timid.value;
+		GlobalVars.SelectedTIMEconomy = -1;
+		$rootScope.$emit('update_event', "");
+	}
+}]);
+
+app.controller("tim_map",['$scope', '$rootScope', '$interval', '$http', 'GlobalVars', function($scope, $rootScope, $interval, $http, GlobalVars) {
+    angular.element(document).ready(function() {
+        ResponsiveLHCMap();
+        GlobalVars.TrainsMap = new LHCMap ($("#lhcmap"), ["  T2", "   T3"], ["#FF0000", "#0000FF"]);
+    });
+
+    $scope.update_tims_position = function () {
+        $http.get("model/send_request.php?tim_id="+GlobalVars.SelectedTIM+"&data=trains_position")
+        .then(function(response) {
+            if (GlobalVars.TrainsMap !=null) {
+                for (i=0; i<response.data.length; i++) {
+                    GlobalVars.TrainsMap.positions[i] = response.data[i]["Position"];
+                }
+                GlobalVars.TrainsMap.draw();
+            };
+        })
+    }
+
+    $scope.update_tims_position();
+    
+    $interval(function() {
+        $scope.update_tims_position();
+    },  update_time+offset_time*0);
+}]);

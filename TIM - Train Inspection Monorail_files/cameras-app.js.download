@@ -1,0 +1,66 @@
+app.controller("tim-cameras", ['$scope', '$rootScope', '$interval', '$http',  'GlobalVars', function($scope, $rootScope, $interval, $http, GlobalVars) {
+    /* Cancel all the intervals of the other controllers */
+    $interval.cancel($rootScope.mainpageInterval);
+    $interval.cancel($rootScope.rppageInterval);  
+    $interval.cancel($rootScope.levelspageInterval);
+
+	$scope.update_images = function () {
+        $http.get("model/send_request.php?tim_id="+GlobalVars.SelectedTIM+"&data=train_status")
+		.then(function(response) {
+			if (response.data.EconomyMode.Value.toLowerCase() == "false") {
+				GlobalVars.SelectedTIMEconomy = 0;
+			} else {
+				GlobalVars.SelectedTIMEconomy = 1;
+			}
+			
+			
+			if (response.data.IsOnline.Value.toLowerCase() == "false") {
+				GlobalVars.SelectedTIMOnline = 0;
+			} else {
+				GlobalVars.SelectedTIMOnline = 1;
+			}
+
+            if (GlobalVars.SelectedTIMEconomy == -1) {
+                $scope.front_camera = "media/gif/Loading_icon.gif";
+                $scope.back_camera = "media/gif/Loading_icon.gif";
+                $scope.rp_camera = "media/gif/Loading_icon.gif";
+                $scope.charging_camera = "media/gif/Loading_icon.gif";
+            } else if (GlobalVars.SelectedTIMOnline == 0) {
+                $scope.front_camera = "media/jpg/nocommunication.jpg";
+                $scope.back_camera = "media/jpg/nocommunication.jpg";
+                $scope.rp_camera = "media/jpg/nocommunication.jpg";
+                $scope.charging_camera = "media/jpg/nocommunication.jpg";
+            } else if (GlobalVars.SelectedTIMEconomy == 0) {
+                $scope.front_camera = "model/send_request.php?tim_id="+GlobalVars.SelectedTIM+"&data=camera&camera_id=0&"+ new Date().getTime();
+                $scope.back_camera = "model/send_request.php?tim_id="+GlobalVars.SelectedTIM+"&data=camera&camera_id=1&"+ new Date().getTime();
+                $scope.rp_camera = "model/send_request.php?tim_id="+GlobalVars.SelectedTIM+"&data=camera&camera_id=2&"+ new Date().getTime();
+                $scope.charging_camera = "model/send_request.php?tim_id="+GlobalVars.SelectedTIM+"&data=camera&camera_id=3&"+ new Date().getTime();
+            } else if (GlobalVars.SelectedTIMEconomy == 1) {
+                $scope.front_camera = "media/jpg/economymode.jpg";
+                $scope.back_camera = "media/jpg/economymode.jpg";
+                $scope.rp_camera = "media/jpg/economymode.jpg";
+                $scope.charging_camera = "media/jpg/economymode.jpg";
+            };
+		})
+		
+	};
+    
+    $scope.front_camera = "media/gif/Loading_icon.gif";
+    $scope.back_camera = "media/gif/Loading_icon.gif";
+    $scope.rp_camera = "media/gif/Loading_icon.gif";
+    $scope.charging_camera = "media/gif/Loading_icon.gif";
+
+	$scope.update_images();
+
+	$rootScope.camerasInterval = $interval(function() {
+		$scope.update_images();
+	}, 5000);
+	
+	$rootScope.$on('update_event', function(event,args) {
+        $scope.front_camera = "media/gif/Loading_icon.gif";
+        $scope.back_camera = "media/gif/Loading_icon.gif";
+        $scope.rp_camera = "media/gif/Loading_icon.gif";
+        $scope.charging_camera = "media/gif/Loading_icon.gif";
+		$scope.update_images();
+	});
+}]);

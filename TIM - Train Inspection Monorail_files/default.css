@@ -1,0 +1,178 @@
+#container {
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+body {
+   	font-family: 'PT Sans', sans-serif;
+    font-size: 14px;
+	background-color: #F5F8FA;
+}
+
+a[target="_blank"]:after {
+	/*content: url(IMAGEURL);*/
+}
+
+div.header_bar {
+    width: 100%;
+	background: #2C2C2C;
+	color: #999;
+}
+
+div.container {
+    margin-top:20px;
+	max-width: 1600px;
+}
+
+td.table-row-name {
+	font-weight: bold;
+}
+
+td.table-row-value {
+	text-align: right;
+}
+
+table#table-tim-info {
+	width: 100%;
+}
+
+img.img-live-camera {
+	width: 100%;
+    height: 100%;
+}
+
+canvas#lhcmap {
+	background-image: url('../media/png/lhcmap.png');
+	background-repeat: no-repeat;
+	z-index:10;
+	width: 100%;
+}
+
+div.search-filter {
+	padding-bottom: 5px;
+}
+
+div.search-filter-title {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+div.search-filter-buttons {
+	text-align: right;
+}
+
+span.minus-icon {
+	background-image: url("../media/png/minus_icon.png");
+	background-size: 100% 100%;
+	width: 30px;
+	height: 30px;
+	display: block;
+	float:right;
+	cursor: pointer;
+}
+
+span.plus-icon {
+	background-image: url("../media/png/plus_icon.png");
+	background-size: 100% 100%;
+	width: 30px;
+	height: 30px;
+	display: block;
+	float:right;
+	cursor: pointer;
+}
+
+input {
+	margin-bottom: 5px;
+}
+
+@media all and (min-width: 768px) {
+	body {
+		font-family: 'PT Sans', sans-serif;
+		font-size: 14px;
+	}
+	
+	div#div-databaseChart {
+		height: 600px;
+	}
+	
+	div.main-page-chart {
+		height: 300px;
+	}
+
+	canvas.lhcmap {
+  
+    	background-size: 100% 100%;
+
+   	}
+
+}
+
+
+@media screen and (max-width: 768px) {
+	body {
+		background-color: #F5F8FA;
+	}
+	
+	div#div-databaseChart {
+		height: 300px;
+	}
+	
+	div.main-page-chart {
+		height:200px;
+	}
+
+	canvas#lhcmap {
+    	background-size: 100% 100%;
+   	}
+}
+
+input.datepicker[readonly] {
+	background-color: white;
+	cursor: text;
+}
+
+table#db-clickedpoint-layoutdb {
+	border:1px solid #000; 
+	width: 100%; 
+	border-collapse:collapse;
+	margin-top: 10px;
+}
+
+table#db-clickedpoint-layoutdb tr th {
+	padding: 5px;
+	border: 1px solid #000;
+}
+
+table#db-clickedpoint-layoutdb tr td {
+	padding: 5px;
+	border: 1px solid #000;
+}
+
+div.database-events-dropdown > button {
+	cursor: pointer;
+}
+
+div.database-events-dropdown > ul > li {
+	cursor: pointer;
+	padding-left: 6px;
+	line-height: 20px;
+}
+
+div.database-events-dropdown > ul > li:hover {
+	background-color: #eee;
+}
+
+div.database-events-dropdown > ul > li > label {
+	color: #000;
+	cursor: pointer;
+	font-size:12px;
+	display: inline-block;
+}
+
+
+div.database-events-dropdown > ul > li > input {
+	cursor: pointer;
+	display: inline-block;
+	vertical-align: middle;
+}
+

@@ -1,0 +1,29 @@
+div.page_box {
+	background-color: white;
+	-webkit-box-shadow: 0px 2px 7px 1px rgba(161,161,161,1);
+	-moz-box-shadow: 0px 2px 7px 1px rgba(161,161,161,1);
+	box-shadow: 0px 2px 7px 1px rgba(161,161,161,1);
+	padding: 10px;
+	margin: 0px 0px 10px 0px;
+}
+
+div.page_box > div.page_box_title {
+	height:30px;
+	line-height: 30px;
+	margin-bottom:10px;
+}
+
+div.page_box > div.page_box_title > img {
+	width: 25px;
+	height: 25px;
+	float: left;
+	margin-right: 10px;
+	margin-top: 0.25em;
+}
+
+div.page_box > div.page_box_title > span {
+	font-size: 16px;	
+	color: #333;
+	font-weight: 600;
+}
+

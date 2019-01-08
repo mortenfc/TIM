@@ -1,0 +1,38 @@
+var basicLiveChartConfig = {
+    chart: {
+        type: 'line',
+        animation: false,
+        height: 300,
+    },
+    series: [
+        {
+            data: [],
+            id: 'series1',
+            animation: false
+        }
+    ],
+    title : {
+        style : {
+            display : 'none'
+        }
+    },
+    yAxis: [{ 
+        title: {
+            text: '',
+        }
+    }],
+    legend: {
+        enabled: false
+    },
+    tooltip: {
+        shared: true,
+        crosshairs: true
+    },
+    responsive: {
+        rules: [{
+            condition: {
+                maxHeight: 300
+            }
+        }]
+    }
+};

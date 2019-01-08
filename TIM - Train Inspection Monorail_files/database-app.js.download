@@ -1,0 +1,516 @@
+app.controller("tim-database",  ['$scope','$location', '$rootScope', '$interval', '$http',  'GlobalVars', function($scope, $location, $rootScope, $interval, $http, GlobalVars) {	
+    $('.datepicker').datepicker();
+	
+	$scope.dbPointSelected = false;
+	$scope.dbChartEmpty = true;
+	$scope.layoutDbLoaded = false;
+    $scope.data = {};
+	
+    $scope.SectorPositions = {
+        "S23" : [3332,6664],
+        "LSS3" : [6400,6930],
+        "S34" : [6664,9997],
+		"LSS4" : [9727,10266],
+        "S45" : [9997,13329],
+		"LSS5" : [13060,13598],
+        "S56" : [13329,16661],
+		"LSS6" : [16392,16931],
+        "S67" : [16661,19994],
+        "LSS7" : [19770, 20230],
+        "S78" : [19994,23315]
+    }
+
+	$scope.LHCEvents = {
+		"2017 EYETS" : ["01/12/2016", "30/04/2017"],
+		"2017 TS1" : ["03/07/2017", "07/07/2017"],
+		"2017 TS2" : ["18/09/2017", "20/09/2017"],
+		"2018 YETS" : ["04/12/2017", "31/03/2018"],
+		"2018 TS1" : ["18/06/2018", "21/06/2018"],
+		"2018 TS2" : ["17/09/2018", "21/09/2018"],
+		"2018 TS3" : ["30/10/2018", "03/11/2018"],
+		"LS2" : ["03/12/2018", "31/12/2020"]
+	}
+	
+	$scope.drawLHCMap = function(start, stop) {
+		/*$http.get("model/layoutdb.php?action=get_range&start="+start+"&end="+stop)
+		.then(function(response) {
+			console.log(response);
+		});*/
+	}
+	
+	$scope.setExtremesChanged = function(eventargs) {
+		if (eventargs.min == null) 
+			eventargs.min = $scope.chartDatabase.xAxis[0].dataMin;
+		
+		if (eventargs.max == null) 
+			eventargs.max = $scope.chartDatabase.xAxis[0].dataMax;
+				
+		$scope.drawLHCMap(eventargs.min, eventargs.max);
+	}
+	
+	
+
+    $scope.chartDatabase = Highcharts.chart('chart-database', {
+		chart: {
+			type: 'line',
+			animation: false,
+            zoomType: "x"
+		},
+		series: [],
+
+		title : {
+			style : {
+				display : 'none'
+			}
+		},
+
+		yAxis: [{ 
+			title: {
+				text: 'Radiation [uSv/h]',
+			},
+			floor: 0,
+			minRange: 10,
+		}],
+		xAxis: { 
+			title: {
+				text: 'DCUM [m]',
+			},
+			events: {
+				setExtremes: $scope.setExtremesChanged
+			}
+		},
+		legend: {
+            align: 'left',
+            verticalAlign: 'top',
+            y: 20,
+            floating: true,
+            borderWidth: 0,
+            labelFormatter: function () { 					//Using this fonction to convert the date in european date
+            	timestamp = new Date(this.name);
+			    var d = timestamp.getDate().toString();
+			    var dd = (d.length === 2) ? d : "0"+d;
+			    var m = (timestamp.getMonth()+1).toString();
+			    var mm = (m.length === 2) ? m : "0"+m;
+			    var yy = (timestamp.getFullYear()).toString();
+			    var h = (timestamp.getHours()+1).toString();
+			    var hh = (h.length === 2) ? h : "0"+h; 
+			    var min = (timestamp.getMinutes()+1).toString();
+			    var minmin = (min.length === 2) ? min : "0"+min;      
+				return dd + "/" + mm + "/" + yy + "  " + hh + "h:" + minmin;
+       		}
+        },
+		tooltip: {
+			formatter: function () {
+           	 	return '<b>Position [DCUM]:</b> '  + (this.x).toFixed(2) + ' m<br>' +
+                       '<b>Radiation: </b>' + (this.y).toFixed(3) + ' uSv/h<br>' + 
+					   '<b>RP arm position: </b>' + (parseInt(this.point.series.data[this.point.index].armDown) == 1 ? 'Down' : 'Up');
+        	},
+        	crosshairs: true,
+		},
+        
+		responsive: {
+			rules: [{
+				condition: {
+				}
+			}]
+		},
+        exporting: {
+            enabled: true,
+            buttons: {
+                contextButton: {
+                    text: 'Export',
+                },
+            },
+			csv: {
+				decimalPoint: '.'
+			},
+			showTable: false,
+			fallbackToExportServer: false
+        },
+        credits: {
+     		enabled: false
+  		},
+        plotOptions: {
+            series: {
+				turboThreshold: 1e8,
+                cursor: 'pointer',
+                point: {
+                    events: {
+                        click: function (e) {
+                            $scope.searchLayoutDb(e.point.x, e.point.y);
+                        }
+                    }
+                },
+                marker: {
+                    lineWidth: 1
+                }
+            }
+     
+        }
+	});
+	
+
+	
+	$scope.searchLayoutDb = function (dcum, value, date) {	
+		$scope.$apply(function(){
+			$scope.dbPointSelected = true;
+			$scope.layout_db_position = "Loading...";
+			$scope.layout_db_radiation = "Loading...";
+			$scope.layoutDbLoaded = false;
+		});
+		
+		$http.get("model/layoutdb.php?action=get_position&position="+dcum)
+		.then(function(response) {
+			$scope.layout_db_position = dcum.toFixed(2) + " m";
+			$scope.layout_db_radiation = value.toFixed(3) + " uSv/h";
+			$scope.layoutdbdata = response.data;
+			$scope.layoutDbLoaded = true;
+		});
+	}
+   
+    $scope.sectorSelectUpdate = function () {
+        if ($scope.data.sectorSelect == 0) {
+            $scope.data.startPosition = null;
+            $scope.data.endPosition = null;
+        } else {
+            $scope.data.startPosition = $scope.SectorPositions[$scope.data.sectorSelect][0];
+            $scope.data.endPosition = $scope.SectorPositions[$scope.data.sectorSelect][1];
+        }
+    }
+	
+	$scope.eventSelectUpdate = function () {
+        if ($scope.data.eventSelect == 0) {
+            $scope.data.startDate = null;
+            $scope.data.endDate = null;
+        } else {
+            $scope.data.startDate = $scope.LHCEvents[$scope.data.eventSelect][0];
+            $scope.data.endDate = $scope.LHCEvents[$scope.data.eventSelect][1];
+        }
+    }
+
+
+    $scope.validate = function() {
+        if ($scope.data.startPosition == null){
+            $scope.startPositionClass = "form-control";
+        } else if (!$.isNumeric($scope.data.startPosition)) {
+            $scope.startPositionClass += " is-invalid";
+        } else {
+            $scope.startPositionClass = "form-control";
+        }
+
+        if ($scope.data.endPosition == null){
+            $scope.endPositionClass = "form-control";
+        } else if (!$.isNumeric($scope.data.endPosition)) {
+            $scope.endPositionClass += " is-invalid";
+        } else {
+            $scope.endPositionClass = "form-control";
+        }
+    }
+
+    $scope.positionInputChange = function () {
+        $scope.data.sectorSelect = "";
+        
+        $scope.validate();
+    }
+
+    $scope.changeDate = function() {
+        var startDate=$scope.data.startDate;
+        var endDate=$scope.data.endDate;
+
+        var newstartDate = startDate.split("/").reverse().join("/");
+        var newendDate = endDate.split("/").reverse().join("/");
+
+        $scope.data.startDate1 = newstartDate;
+        $scope.data.endDate1 = newendDate;
+    }
+
+    $scope.verification = function() {   //Function to see if the input of the position are correct
+        var change;
+		
+		var startPosition = parseFloat($scope.data.startPosition);
+		var endPosition = parseFloat($scope.data.endPosition);
+        if (startPosition > endPosition) {
+            change = startPosition;
+            $scope.data.startPosition = endPosition;
+            $scope.data.endPosition = change;
+        } if (startPosition < 0){
+            alert("The start position must be above 0");
+            $scope.data.startPosition = 0;
+        } if (endPosition > 27000){
+            alert("The end position must be under 27000");
+            $scope.data.endPosition = 27000;
+        }
+    }
+
+    $scope.detectionPeaks = function(response) {
+        var chart = $('#chart-database').highcharts();
+
+        while(chart.series.length > 0)
+            chart.series[0].remove(true); 
+        
+        
+
+            $scope.chartDatabase.hideLoading();
+            var received_data = response.data;
+            var series = [];
+            var number_of_data = 0;
+
+            if (received_data.length ==0) {
+                $scope.dbChartEmpty = true;
+            } else {
+                $scope.dbChartEmpty = false;
+            }
+            
+            for(i=0; i<received_data.length; i++) {
+                var data = [];
+                
+                var data_max = [];
+
+                /*------------------------------------------------------------Function to see the peaks of the charts---------------------------------------*/
+
+                var currentRadiation = 0;
+                var pastRadiation = 0;
+                var highRadiation = 0;
+
+                var currentPosition = 0;
+                var pastPosition = 0;
+                var highPosition = 0;
+                
+                for (k=0; k<received_data[i].mission_data.length; k++) {
+
+                    var value = received_data[i].mission_data[k];                           
+                    currentRadiation = parseFloat(value.Rpdata);                          //We take the current radiation level
+                    currentPosition = parseFloat(value.Position);                         //We take the current radiation position
+                    data.push([currentPosition, currentRadiation]);                       //We create a table to transfer the data in a serie
+                    
+                    if (currentRadiation > "10") {                                        //We see if the radiation level is higher than 10   
+                        if(currentRadiation >= pastRadiation) {                           //We see if the current radiation is higher than the past radiation, we go to the top of the charts
+                            pastRadiation = currentRadiation;                             //Yes, the past radiation is now the current radiation, we're moving to the top
+                            pastPosition = currentPosition;
+                            if (highRadiation > currentRadiation) {                       //When we find the first peak, we reinitialize the highradiation to find the next peak
+                                highRadiation = 0; 
+                            }
+                        } else if(currentRadiation < pastRadiation){                      //No, so if the current radiation is lower than the past radiation, it means that we're going down
+                            if (Math.abs(currentRadiation - pastRadiation) >= 10 && Math.abs(currentPosition - pastPosition) >= 2) {                 //We make an average because there are some peaks tha are too small and useless, we do the same for the range
+                                if (highRadiation < pastRadiation) {                      //If the top radiation registered before is lower than the past radiation then we update the top radiation
+                                    highRadiation = pastRadiation;
+                                    highPosition = pastPosition;              
+                                    data_max.push([highPosition, highRadiation]);      //We put the data in that to be able to use it later in a serie
+                                    //alert(received_data[i].mission_info.Start_Time);      //Display the name of the maximum
+                                    //alert(data_max);                                      //Display the data of the maximum
+                                }
+                                pastRadiation = currentRadiation;                         //We go to the next data if there is nothing
+                                pastPosition = currentPosition;
+                            }                                                                                                           
+                        } 
+                    }
+                }
+                
+
+                var aSeries = {
+                    data : data,
+                    name : received_data[i].mission_info.Start_Time
+                };           
+
+                chart.addSeries(aSeries);
+ 
+                number_of_data += received_data[i].mission_data.length;
+            }
+            
+            $scope.db_number_of_data = number_of_data;
+            $scope.db_number_of_missions = received_data.length;      
+    }
+	
+	
+	$scope.chartTypes = {
+		RP: 'RP',
+		OXYGEN: 'Oxygen',
+		TEMPERATURE: 'Temperature',
+	};
+	
+	$scope.shownChart = $scope.chartTypes.RP;
+		
+	$scope.rpSeries = [];
+	$scope.temperatureSeries = [];
+	$scope.oxygenSeries = [];
+
+    $scope.TraceChart = function(response) {
+        var chart = $('#chart-database').highcharts();
+
+        while(chart.series.length > 0)
+            chart.series[0].remove(true);        
+       
+		$scope.chartDatabase.hideLoading();
+		var received_data = response.data;			
+
+		if (received_data.length ==0) {
+			$scope.dbChartEmpty = true;
+		} else {
+			$scope.dbChartEmpty = false;
+		}
+
+		var number_of_data = 0;
+		$scope.rpSeries = [];
+		$scope.temperatureSeries = [];
+		$scope.oxygenSeries = [];
+		
+		for(i=0; i<received_data.length; i++) {
+			var prevArmDown = 0;
+			
+			var data_rp = [];
+			var data_ox = [];
+			var data_temp = [];
+			
+			for (k=0; k<received_data[i].mission_data.length; k++) {
+				var value = received_data[i].mission_data[k];
+
+				data_rp.push({
+					x: parseFloat(value.Position),
+					y: parseFloat(value.Rpdata),
+					armDown: value.ArmDown
+				});
+				
+				data_ox.push({
+					x: parseFloat(value.Position),
+					y: parseFloat(value.Oxygen),
+					armDown: value.ArmDown
+				});
+				
+				data_temp.push({
+					x: parseFloat(value.Position),
+					y: parseFloat(value.Temperature),
+					armDown: value.ArmDown
+				});
+			}
+
+			$scope.rpSeries.push({
+				data : data_rp,
+				name : received_data[i].mission_info.Start_Time,
+			});
+			
+			$scope.temperatureSeries.push({
+				data : data_temp,
+				name : received_data[i].mission_info.Start_Time,
+			});
+
+			$scope.oxygenSeries.push({
+				data : data_ox,
+				name : received_data[i].mission_info.Start_Time,
+			});		
+			
+			chart.addSeries($scope.rpSeries[i]);
+							
+			
+			number_of_data += received_data[i].mission_data.length;
+		}
+		
+		
+		$scope.db_number_of_data = number_of_data;
+		$scope.db_number_of_missions = received_data.length;  
+		
+		$scope.shownChart = $scope.chartTypes.RP;
+		chart.yAxis[0].axisTitle.attr({ text:"Radiation [uSv/h]"});
+    }
+    
+	$scope.showRp = function() {
+		var chart = $('#chart-database').highcharts();
+		while(chart.series.length > 0)
+            chart.series[0].remove(true);
+		
+		for (i=0; i<$scope.rpSeries.length; i++) {
+			chart.addSeries($scope.rpSeries[i]);	
+		}
+		
+		$scope.shownChart = $scope.chartTypes.RP;
+		chart.yAxis[0].axisTitle.attr({ text:"Radiation [uSv/h]"});
+		
+	}
+	
+	$scope.showOxy = function() {
+		var chart = $('#chart-database').highcharts();
+		while(chart.series.length > 0)
+            chart.series[0].remove(true);
+		
+		for (i=0; i<$scope.rpSeries.length; i++) {
+			chart.addSeries($scope.oxygenSeries[i]);			
+		}
+		
+		$scope.shownChart = $scope.chartTypes.OXYGEN;
+		chart.yAxis[0].axisTitle.attr({ text:"Oxygen [%]"});
+	}
+	
+	$scope.showTemp = function() {
+		var chart = $('#chart-database').highcharts();
+		while(chart.series.length > 0)
+            chart.series[0].remove(true);
+		
+		for (i=0; i<$scope.rpSeries.length; i++) {
+			chart.addSeries($scope.temperatureSeries[i]);			
+		}
+		
+		$scope.shownChart = $scope.chartTypes.TEMPERATURE;
+		chart.yAxis[0].axisTitle.attr({text:"Temperature [C]"});
+	}
+	
+    $scope.getDatabaseDataRobotronic = function() {
+        $scope.chartDatabase.showLoading(); 
+        $scope.data.ID = $location.search().id; 
+
+        $http.get("model/missiondb.php?function=search_data_robotronic&id="+$scope.data.ID)
+        .then(function(response) {			
+            $scope.TraceChart(response);
+            $scope.db_distance_range = Math.abs(response.data[0].mission_data[0].Position - response.data[0].mission_data[response.data[0].mission_data.length-1].Position) + " m";    
+        });
+    }   
+
+    $scope.getDatabaseData = function() {
+        $scope.changeDate(); 
+        $scope.chartDatabase.showLoading(); 
+        $http.get("model/missiondb.php?function=search_data&start_position="+$scope.data.startPosition+"&end_position="+$scope.data.endPosition+"&start_date="+$scope.data.startDate1+ "&end_date="+$scope.data.endDate1)
+        .then(function(response) {
+
+            $scope.TraceChart(response);
+
+            $scope.db_distance_range = parseFloat($scope.data.endPosition) - parseFloat($scope.data.startPosition) + " m";
+        });
+    }   
+
+    $scope.searchData = function() {
+        $scope.verification();
+        $location.search({
+            sdcum: $scope.data.startPosition,
+            edcum: $scope.data.endPosition,
+            sdate: $scope.data.startDate,
+            edate: $scope.data.endDate
+        });
+
+    }
+
+    $scope.parseUrl = function() {
+        var ID = $location.search().id; 
+        var start_position = $location.search().sdcum;
+        var end_position = $location.search().edcum;
+
+        var start_date = $location.search().sdate;
+        var end_date = $location.search().edate;
+        var change;
+
+        if (ID != null) {
+            $scope.getDatabaseDataRobotronic(); 
+        } else {
+            if ((start_position != null)&&(end_position != null)&&(start_date != null)&&(end_date!=null)) {            
+                $scope.data.startPosition = start_position;
+                $scope.data.endPosition = end_position;
+                $scope.data.startDate = start_date;
+                $scope.data.endDate = end_date;
+
+                $scope.validate();
+                $scope.getDatabaseData();                    
+            }
+        }
+    }
+
+    $scope.parseUrl();
+
+}]);
+

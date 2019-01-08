@@ -1,0 +1,26 @@
+div.tab-box > div.tab-box-menu > ul  {
+    background-color: #F0F0F0;
+    margin:0;
+    padding: 0;
+}
+
+div.tab-box > div.tab-box-menu > ul > li {
+    display: inline-block;
+    width: 80px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+}
+
+div.tab-box > div.tab-box-menu > ul > li:hover {
+    background-color: #ccc;
+}
+
+
+div.tab-box > div.tab-box-menu > ul > li.selected {
+    background-color: #fff;
+    border-top: 2px solid #00CDEC;
+}

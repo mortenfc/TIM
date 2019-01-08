@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<!-- saved from url=(0027)https://timlhc.web.cern.ch/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide:not(.ng-hide-animate){display:none !important;}ng\:form{display:block;}.ng-animate-shim{visibility:hidden;}.ng-anchor{position:absolute;}</style>
+    <title>TIM - Train Inspection Monorail</title>
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+
+    <meta name="description" content="">
+    <meta name="author" content="">
+	
+	<!--<base href="/">--><base href=".">
+    
+    <link rel="stylesheet" href="./TIM - Train Inspection Monorail_files/bootstrap.min.css">
+    <link rel="stylesheet" href="./TIM - Train Inspection Monorail_files/bootstrap-datepicker.standalone.min.css">
+    <link rel="stylesheet" href="./TIM - Train Inspection Monorail_files/highslide.css">
+    <link rel="stylesheet" href="./TIM - Train Inspection Monorail_files/font.css">
+    <link rel="stylesheet" media="all" href="./TIM - Train Inspection Monorail_files/default.css">
+    <link rel="stylesheet" href="./TIM - Train Inspection Monorail_files/tab-box.css">
+    <link rel="stylesheet" href="./TIM - Train Inspection Monorail_files/navbar.css">
+    <link rel="stylesheet" href="./TIM - Train Inspection Monorail_files/page_box.css">
+
+    <script src="./TIM - Train Inspection Monorail_files/jquery-3.2.1.min.js.download"></script>
+    <script src="./TIM - Train Inspection Monorail_files/popper.min.js.download"></script>
+    <script src="./TIM - Train Inspection Monorail_files/bootstrap.min.js.download"></script>
+    <script src="./TIM - Train Inspection Monorail_files/custom.js.download"></script>    
+    <script src="./TIM - Train Inspection Monorail_files/bootstrap-datepicker.min.js.download"></script>    
+
+    <script src="./TIM - Train Inspection Monorail_files/angular.min.js.download"></script>
+    <script src="./TIM - Train Inspection Monorail_files/angular-route.min.js.download"></script>
+
+    <script src="./TIM - Train Inspection Monorail_files/highcharts.src.js.download"></script>
+	
+    <script src="./TIM - Train Inspection Monorail_files/exporting.js.download"></script>
+	<script src="./TIM - Train Inspection Monorail_files/export-data.js.download"></script>
+    <script src="./TIM - Train Inspection Monorail_files/offline-exporting.js.download"></script>
+    <script src="./TIM - Train Inspection Monorail_files/highslide-full.min.js.download"></script>
+    <script src="./TIM - Train Inspection Monorail_files/highslide.config.js.download"></script>
+    <script src="./TIM - Train Inspection Monorail_files/no-data-to-display.js.download"></script>
+    <script src="./TIM - Train Inspection Monorail_files/annotations.js.download"></script>
+
+    <script src="./TIM - Train Inspection Monorail_files/lhcmap.js.download"></script>
+    <script src="./TIM - Train Inspection Monorail_files/chart.js.download"></script>
+    <script src="./TIM - Train Inspection Monorail_files/app.js.download"></script>
+    <script src="./TIM - Train Inspection Monorail_files/main-app.js.download"></script>
+    <script src="./TIM - Train Inspection Monorail_files/cameras-app.js.download"></script>
+    <script src="./TIM - Train Inspection Monorail_files/rp-app.js.download"></script>
+    <script src="./TIM - Train Inspection Monorail_files/levels-app.js.download"></script>
+    <script src="./TIM - Train Inspection Monorail_files/database-app.js.download"></script>
+<style type="text/css">.highslide img {cursor: url(media/highslide/zoomin.cur), pointer !important;}.highslide-viewport-size {position: fixed; width: 100%; height: 100%; left: 0; top: 0}</style></head>
+
+<body ng-app="timlhcApp" class="ng-scope">
+    <div class="header_bar">		
+      <span style="margin-left: 20px"><span style="color:white;">CERN |</span> EN-SMM-MRO</span>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-cern">
+      <a class="navbar-brand" href="https://timlhc.web.cern.ch/" style="font-size:18px;">TIM Web Application</a>
+      <a class="navbar-toggler" role="button" data-toggle="collapse" data-target="#navbar-mainmenu" aria-controls="navbar-mainmenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </a>
+
+      <div class="collapse navbar-collapse" id="navbar-mainmenu">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="https://timlhc.web.cern.ch/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://timlhc.web.cern.ch/#!/cameras">Cameras</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://timlhc.web.cern.ch/#!/rp">RP</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://timlhc.web.cern.ch/#!/levels">Levels</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://timlhc.web.cern.ch/#!/database">Database</a>
+          </li>
+          <li class="nav-item">
+            <div id="train-selector" ng-controller="tim_selector" class="ng-scope">
+              <select ng-model="timid" ng-options="c.name for c in trains" ng-change="change()" class="ng-pristine ng-untouched ng-valid ng-not-empty"><option label="TIM 2" value="object:3" selected="selected">TIM 2</option><option label="TIM 3" value="object:4">TIM 3</option></select>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ngView: --><div class="appView ng-scope" ng-view=""><div class="container ng-scope" ng-controller="tim-mainpage">
+    <div class="row">
+        <div class="col-lg-4 ng-scope" ng-controller="tim-mainpage-status">
+            <div class="page_box">
+                <div class="page_box_title"><img src="./TIM - Train Inspection Monorail_files/info_icon.png"> <span class="ng-binding">TIM 2 information</span></div>
+                <div class="page_box_content">
+                    <table id="table-tim-info">
+                        <tbody><tr>
+                            <td class="table-row-name">Position (sector)</td>
+                            <td class="table-row-value ng-binding"></td>
+                        </tr>
+                        <tr>
+                            <td class="table-row-name">Position (DCUM)</td>
+                            <td class="table-row-value ng-binding">13278.73 m</td>
+                        </tr>
+                        <tr>
+                            <td class="table-row-name">Velocity</td>
+                            <td class="table-row-value ng-binding">0.00  m/s</td>
+                        </tr>
+                        <tr>
+                            <td class="table-row-name">Battery level</td>
+                            <td class="table-row-value ng-binding">100  %</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="table-row-name">Status</td>
+                            <td class="table-row-value ng-binding">Charging in economy mode</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="height:35px; vertical-align:top;"></td>
+                        </tr>
+                        <tr>
+                            <td class="table-row-name">Radiation level</td>
+                            <td class="table-row-value ng-binding">N/A</td>
+                        </tr>
+                        
+                        <tr>
+                            <td class="table-row-name">Oxygen level</td>
+                            <td class="table-row-value ng-binding">N/A</td>
+                        </tr>
+                        <tr>
+                            <td class="table-row-name">Temperature</td>
+                            <td class="table-row-value ng-binding">23.4  C</td>
+                        </tr>
+                        
+                        <tr>
+                            <td></td>
+                            <td style="height:35px; vertical-align:top;"></td>
+                        </tr>
+                        <tr>
+                            <td class="table-row-name">RP arm status</td>
+                            <td class="table-row-value ng-binding">Retracted</td>
+                        </tr>
+                    </tbody></table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8 ng-scope" ng-controller="tim-mainpage-cameras">
+            <div class="row">
+            <div class="col-md-6">
+                <div class="page_box">
+                    <div class="page_box_title"><img src="./TIM - Train Inspection Monorail_files/security_camera_icon.png"> <span>Live camera front</span></div>
+                    <div class="page_box_content"><img class="img-live-camera" ng-src="media/jpg/economymode.jpg" onerror="this.onerror=null;this.src=&#39;media/gif/Loading_icon.gif&#39;;" src="./TIM - Train Inspection Monorail_files/economymode.jpg"></div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="page_box">
+                <div class="page_box_title"><img src="./TIM - Train Inspection Monorail_files/security_camera_icon.png"> <span>Live camera back</span></div>
+                <div class="page_box_content"><img class="img-live-camera" ng-src="media/jpg/economymode.jpg" onerror="this.onerror=null;this.src=&#39;media/gif/Loading_icon.gif&#39;;" src="./TIM - Train Inspection Monorail_files/economymode.jpg"></div>
+                </div>              
+            </div>
+            </div>
+        </div>
+    </div>
+    <div class="row ng-scope" ng-controller="tim-mainpage-charts">
+        <div class="col-md-4">
+            <div class="page_box">
+                <div class="page_box_title"><img src="./TIM - Train Inspection Monorail_files/data_icon.png"> <span>Live radiation level</span></div>
+                <div class="page_box_content">
+                    <div class="main-page-chart" id="chart-liverp" data-highcharts-chart="3" style="overflow: hidden;"><div id="highcharts-1ppnnxn-15" dir="ltr" class="highcharts-container " style="position: relative; overflow: hidden; width: 483px; height: 300px; text-align: left; line-height: normal; z-index: 0; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><svg version="1.1" class="highcharts-root" style="font-family:&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Arial, Helvetica, sans-serif;font-size:12px;" xmlns="http://www.w3.org/2000/svg" width="483" height="300" viewBox="0 0 483 300"><desc>Created with Highcharts 7.0.1</desc><defs><clippath id="highcharts-1ppnnxn-16"><rect x="0" y="0" width="435" height="275" fill="none"></rect></clippath><clippath id="highcharts-1ppnnxn-19"><rect x="38" y="10" width="435" height="275" fill="none"></rect></clippath></defs><rect fill="#ffffff" class="highcharts-background" x="0" y="0" width="483" height="300" rx="0" ry="0"></rect><rect fill="none" class="highcharts-plot-background" x="38" y="10" width="435" height="275"></rect><g class="highcharts-label highcharts-no-data" transform="translate(197,136)"><text x="3" data-z-index="1" style="font-size:12px;font-weight:bold;color:#666666;fill:#666666;" y="15"><tspan>No data to display</tspan></text></g><g class="highcharts-grid highcharts-xaxis-grid " data-z-index="1"></g><g class="highcharts-grid highcharts-yaxis-grid " data-z-index="1"></g><rect fill="none" class="highcharts-plot-border" data-z-index="1" x="38" y="10" width="435" height="275"></rect><g class="highcharts-axis highcharts-xaxis " data-z-index="2"><path fill="none" class="highcharts-axis-line" stroke="#ccd6eb" stroke-width="1" data-z-index="7" d="M 38 285.5 L 473 285.5"></path></g><g class="highcharts-axis highcharts-yaxis " data-z-index="2"><text x="26" data-z-index="7" text-anchor="middle" transform="translate(0,0) rotate(270 26 147.5)" class="highcharts-axis-title" style="color:#666666;fill:#666666;" y="147.5"><tspan>Radiation level [uSv/h]</tspan></text><path fill="none" class="highcharts-axis-line" data-z-index="7" d="M 38 10 L 38 285"></path></g><g class="highcharts-series-group" data-z-index="3"><g data-z-index="0.1" class="highcharts-series highcharts-series-0 highcharts-line-series highcharts-color-0 " transform="translate(38,10) scale(1 1)" clip-path="url(https://timlhc.web.cern.ch/#highcharts-1ppnnxn-16)"></g><g data-z-index="0.1" class="highcharts-markers highcharts-series-0 highcharts-line-series highcharts-color-0 " transform="translate(38,10) scale(1 1)" clip-path="none"></g></g><g class="highcharts-button highcharts-contextbutton" stroke-linecap="round" data-z-index="3" transform="translate(449,10)"><title>Chart context menu</title><rect fill="#ffffff" class=" highcharts-button-box" x="0.5" y="0.5" width="24" height="22" rx="2" ry="2" stroke="none" stroke-width="1"></rect><path fill="#666666" d="M 6 6.5 L 20 6.5 M 6 11.5 L 20 11.5 M 6 16.5 L 20 16.5" class="highcharts-button-symbol" data-z-index="1" stroke="#666666" stroke-width="3"></path><text x="0" data-z-index="1" style="font-weight:normal;color:#333333;cursor:pointer;fill:#333333;" y="12"></text></g><text x="242" text-anchor="middle" class="highcharts-title" data-z-index="4" style="color:#333333;font-size:18px;display:none;fill:#333333;" y="24"><tspan>Chart title</tspan></text><text x="242" text-anchor="middle" class="highcharts-subtitle" data-z-index="4" style="color:#666666;fill:#666666;" y="24"></text><g class="highcharts-axis-labels highcharts-xaxis-labels " data-z-index="7"></g><g class="highcharts-axis-labels highcharts-yaxis-labels " data-z-index="7"></g></svg></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="page_box">
+                <div class="page_box_title"><img src="./TIM - Train Inspection Monorail_files/oxygen_icon.png"> <span>Live oxygen level</span></div>
+                <div class="page_box_content">
+                    <div class="main-page-chart" id="chart-liveoxygen" data-highcharts-chart="4" style="overflow: hidden;"><div id="highcharts-1ppnnxn-20" dir="ltr" class="highcharts-container " style="position: relative; overflow: hidden; width: 483px; height: 300px; text-align: left; line-height: normal; z-index: 0; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><svg version="1.1" class="highcharts-root" style="font-family:&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Arial, Helvetica, sans-serif;font-size:12px;" xmlns="http://www.w3.org/2000/svg" width="483" height="300" viewBox="0 0 483 300"><desc>Created with Highcharts 7.0.1</desc><defs><clippath id="highcharts-1ppnnxn-21"><rect x="0" y="0" width="399" height="275" fill="none"></rect></clippath><clippath id="highcharts-1ppnnxn-24"><rect x="74" y="10" width="399" height="275" fill="none"></rect></clippath></defs><rect fill="#ffffff" class="highcharts-background" x="0" y="0" width="483" height="300" rx="0" ry="0"></rect><rect fill="none" class="highcharts-plot-background" x="74" y="10" width="399" height="275"></rect><g class="highcharts-label highcharts-no-data" transform="translate(215,136)"><text x="3" data-z-index="1" style="font-size:12px;font-weight:bold;color:#666666;fill:#666666;" y="15"><tspan>No data to display</tspan></text></g><g class="highcharts-grid highcharts-xaxis-grid " data-z-index="1"></g><g class="highcharts-grid highcharts-yaxis-grid " data-z-index="1"><path fill="none" stroke="#e6e6e6" stroke-width="1" data-z-index="1" class="highcharts-grid-line" d="M 74 285.5 L 473 285.5" opacity="1"></path><path fill="none" stroke="#e6e6e6" stroke-width="1" data-z-index="1" class="highcharts-grid-line" d="M 74 148.5 L 473 148.5" opacity="1"></path><path fill="none" stroke="#e6e6e6" stroke-width="1" data-z-index="1" class="highcharts-grid-line" d="M 74 9.5 L 473 9.5" opacity="1"></path><path fill="none" stroke="#e6e6e6" stroke-width="1" data-z-index="1" class="highcharts-grid-line" d="M 74 216.5 L 473 216.5" opacity="1"></path><path fill="none" stroke="#e6e6e6" stroke-width="1" data-z-index="1" class="highcharts-grid-line" d="M 74 79.5 L 473 79.5" opacity="1"></path></g><rect fill="none" class="highcharts-plot-border" data-z-index="1" x="74" y="10" width="399" height="275"></rect><g class="highcharts-axis highcharts-xaxis " data-z-index="2"><path fill="none" class="highcharts-axis-line" stroke="#ccd6eb" stroke-width="1" data-z-index="7" d="M 74 285.5 L 473 285.5"></path></g><g class="highcharts-axis highcharts-yaxis " data-z-index="2"><text x="26.09375" data-z-index="7" text-anchor="middle" transform="translate(0,0) rotate(270 26.09375 147.5)" class="highcharts-axis-title" style="color:#666666;fill:#666666;" y="147.5"><tspan>Oxygen level [%]</tspan></text><path fill="none" class="highcharts-axis-line" data-z-index="7" d="M 74 10 L 74 285"></path></g><g class="highcharts-series-group" data-z-index="3"><g data-z-index="0.1" class="highcharts-series highcharts-series-0 highcharts-line-series highcharts-color-0 " transform="translate(74,10) scale(1 1)" clip-path="url(https://timlhc.web.cern.ch/#highcharts-1ppnnxn-21)"></g><g data-z-index="0.1" class="highcharts-markers highcharts-series-0 highcharts-line-series highcharts-color-0 " transform="translate(74,10) scale(1 1)" clip-path="none"></g></g><g class="highcharts-button highcharts-contextbutton" stroke-linecap="round" data-z-index="3" transform="translate(449,10)"><title>Chart context menu</title><rect fill="#ffffff" class=" highcharts-button-box" x="0.5" y="0.5" width="24" height="22" rx="2" ry="2" stroke="none" stroke-width="1"></rect><path fill="#666666" d="M 6 6.5 L 20 6.5 M 6 11.5 L 20 11.5 M 6 16.5 L 20 16.5" class="highcharts-button-symbol" data-z-index="1" stroke="#666666" stroke-width="3"></path><text x="0" data-z-index="1" style="font-weight:normal;color:#333333;cursor:pointer;fill:#333333;" y="12"></text></g><text x="242" text-anchor="middle" class="highcharts-title" data-z-index="4" style="color:#333333;font-size:18px;display:none;fill:#333333;" y="24"><tspan>Chart title</tspan></text><text x="242" text-anchor="middle" class="highcharts-subtitle" data-z-index="4" style="color:#666666;fill:#666666;" y="24"></text><g class="highcharts-axis-labels highcharts-xaxis-labels " data-z-index="7"></g><g class="highcharts-axis-labels highcharts-yaxis-labels " data-z-index="7"><text x="59" style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="end" transform="translate(0,0)" y="289" opacity="1">0</text><text x="59" style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="end" transform="translate(0,0)" y="152" opacity="1">50</text><text x="59" style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="end" transform="translate(0,0)" y="14" opacity="1">100</text><text x="59" style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="end" transform="translate(0,0)" y="220" opacity="1">25</text><text x="59" style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="end" transform="translate(0,0)" y="83" opacity="1">75</text></g></svg></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="page_box">
+                <div class="page_box_title"><img src="./TIM - Train Inspection Monorail_files/temperature_icon.png"> <span>Live temperature</span></div>
+                <div class="page_box_content">
+                    <div class="main-page-chart" id="chart-livetemperature" data-highcharts-chart="5" style="overflow: hidden;"><div id="highcharts-1ppnnxn-25" dir="ltr" class="highcharts-container " style="position: relative; overflow: hidden; width: 483px; height: 300px; text-align: left; line-height: normal; z-index: 0; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><svg version="1.1" class="highcharts-root" style="font-family:&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Arial, Helvetica, sans-serif;font-size:12px;" xmlns="http://www.w3.org/2000/svg" width="483" height="300" viewBox="0 0 483 300"><desc>Created with Highcharts 7.0.1</desc><defs><clippath id="highcharts-1ppnnxn-26"><rect x="0" y="0" width="406" height="253" fill="none"></rect></clippath><clippath id="highcharts-1ppnnxn-29"><rect x="67" y="10" width="406" height="253" fill="none"></rect></clippath></defs><rect fill="#ffffff" class="highcharts-background" x="0" y="0" width="483" height="300" rx="0" ry="0"></rect><rect fill="none" class="highcharts-plot-background" x="67" y="10" width="406" height="253"></rect><g class="highcharts-grid highcharts-xaxis-grid " data-z-index="1"><path fill="none" data-z-index="1" class="highcharts-grid-line" d="M 269.5 10 L 269.5 263" opacity="1"></path></g><g class="highcharts-grid highcharts-yaxis-grid " data-z-index="1"><path fill="none" stroke="#e6e6e6" stroke-width="1" data-z-index="1" class="highcharts-grid-line" d="M 67 263.5 L 473 263.5" opacity="1"></path><path fill="none" stroke="#e6e6e6" stroke-width="1" data-z-index="1" class="highcharts-grid-line" d="M 67 179.5 L 473 179.5" opacity="1"></path><path fill="none" stroke="#e6e6e6" stroke-width="1" data-z-index="1" class="highcharts-grid-line" d="M 67 94.5 L 473 94.5" opacity="1"></path><path fill="none" stroke="#e6e6e6" stroke-width="1" data-z-index="1" class="highcharts-grid-line" d="M 67 9.5 L 473 9.5" opacity="1"></path></g><rect fill="none" class="highcharts-plot-border" data-z-index="1" x="67" y="10" width="406" height="253"></rect><g class="highcharts-axis highcharts-xaxis " data-z-index="2"><path fill="none" class="highcharts-tick" stroke="#ccd6eb" stroke-width="1" d="M 269.5 263 L 269.5 273" opacity="1"></path><path fill="none" class="highcharts-axis-line" stroke="#ccd6eb" stroke-width="1" data-z-index="7" d="M 67 263.5 L 473 263.5"></path></g><g class="highcharts-axis highcharts-yaxis " data-z-index="2"><text x="26.09375" data-z-index="7" text-anchor="middle" transform="translate(0,0) rotate(270 26.09375 136.5)" class="highcharts-axis-title" style="color:#666666;fill:#666666;" y="136.5"><tspan>Temperature [°C]</tspan></text><path fill="none" class="highcharts-axis-line" data-z-index="7" d="M 67 10 L 67 263"></path></g><path fill="none" class="highcharts-crosshair highcharts-crosshair-thin undefined" data-z-index="2" stroke="#cccccc" stroke-width="1" style="pointer-events:none;" visibility="hidden" d="M 155.5 10 L 155.5 263"></path><g class="highcharts-series-group" data-z-index="3"><g data-z-index="0.1" class="highcharts-series highcharts-series-0 highcharts-line-series highcharts-color-0 " transform="translate(67,10) scale(1 1)" clip-path="url(https://timlhc.web.cern.ch/#highcharts-1ppnnxn-26)"><path fill="none" d="M 203 154.32999999999998 L 203 154.32999999999998 L 203 154.32999999999998 L 203 154.32999999999998 L 203 154.32999999999998" class="highcharts-graph" data-z-index="1" stroke="#7cb5ec" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path><path fill="none" d="M 193 154.32999999999998 L 203 154.32999999999998 L 203 154.32999999999998 L 203 154.32999999999998 L 203 154.32999999999998 L 203 154.32999999999998 L 213 154.32999999999998" visibility="visible" data-z-index="2" class="highcharts-tracker-line" stroke-linejoin="round" stroke="rgba(192,192,192,0.0001)" stroke-width="22"></path></g><g data-z-index="0.1" class="highcharts-markers highcharts-series-0 highcharts-line-series highcharts-color-0  highcharts-tracker" transform="translate(67,10) scale(1 1)" clip-path="none"><path fill="#7cb5ec" d="M 206 154 A 3 3 0 1 1 205.99999850000012 153.9970000005 Z" class="highcharts-point highcharts-color-0"></path><path fill="#7cb5ec" d="M 206 154 A 3 3 0 1 1 205.99999850000012 153.9970000005 Z" class="highcharts-point highcharts-color-0"></path><path fill="#7cb5ec" d="M 206 154 A 3 3 0 1 1 205.99999850000012 153.9970000005 Z" class="highcharts-point highcharts-color-0"></path><path fill="#7cb5ec" d="M 206 154 A 3 3 0 1 1 205.99999850000012 153.9970000005 Z" class="highcharts-point highcharts-color-0"></path><path fill="#7cb5ec" d="M 206 154 A 3 3 0 1 1 205.99999850000012 153.9970000005 Z" class="highcharts-point highcharts-color-0"></path><path fill="#7cb5ec" visibility="hidden" d="M 89 154.32999999999998 A 0 0 0 1 1 89 154.32999999999998 Z" class="highcharts-halo highcharts-color-0" data-z-index="-1" fill-opacity="0.25"></path></g></g><g class="highcharts-button highcharts-contextbutton" stroke-linecap="round" data-z-index="3" transform="translate(449,10)"><title>Chart context menu</title><rect fill="#ffffff" class=" highcharts-button-box" x="0.5" y="0.5" width="24" height="22" rx="2" ry="2" stroke="none" stroke-width="1"></rect><path fill="#666666" d="M 6 6.5 L 20 6.5 M 6 11.5 L 20 11.5 M 6 16.5 L 20 16.5" class="highcharts-button-symbol" data-z-index="1" stroke="#666666" stroke-width="3"></path><text x="0" data-z-index="1" style="font-weight:normal;color:#333333;cursor:pointer;fill:#333333;" y="12"></text></g><text x="242" text-anchor="middle" class="highcharts-title" data-z-index="4" style="color:#333333;font-size:18px;display:none;fill:#333333;" y="24"><tspan>Chart title</tspan></text><text x="242" text-anchor="middle" class="highcharts-subtitle" data-z-index="4" style="color:#666666;fill:#666666;" y="24"></text><g class="highcharts-axis-labels highcharts-xaxis-labels " data-z-index="7"><text x="270" style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="middle" transform="translate(0,0)" y="282" opacity="1"><tspan>13 278.73</tspan></text></g><g class="highcharts-axis-labels highcharts-yaxis-labels " data-z-index="7"><text x="52" style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="end" transform="translate(0,0)" y="267" opacity="1">0</text><text x="52" style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="end" transform="translate(0,0)" y="183" opacity="1">20</text><text x="52" style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="end" transform="translate(0,0)" y="98" opacity="1">40</text><text x="52" style="color:#666666;cursor:default;font-size:11px;fill:#666666;" text-anchor="end" transform="translate(0,0)" y="14" opacity="1">60</text></g><g class="highcharts-label highcharts-tooltip highcharts-color-0" style="pointer-events:none;white-space:nowrap;" data-z-index="8" transform="translate(86,-9999)" opacity="0" visibility="visible"><path fill="none" class="highcharts-label-box highcharts-tooltip-box highcharts-shadow" d="M 3.5 0.5 L 137.5 0.5 C 140.5 0.5 140.5 0.5 140.5 3.5 L 140.5 44.5 C 140.5 47.5 140.5 47.5 137.5 47.5 L 75.5 47.5 69.5 53.5 63.5 47.5 3.5 47.5 C 0.5 47.5 0.5 47.5 0.5 44.5 L 0.5 3.5 C 0.5 0.5 0.5 0.5 3.5 0.5" stroke="#000000" stroke-opacity="0.049999999999999996" stroke-width="5" transform="translate(1, 1)"></path><path fill="none" class="highcharts-label-box highcharts-tooltip-box highcharts-shadow" d="M 3.5 0.5 L 137.5 0.5 C 140.5 0.5 140.5 0.5 140.5 3.5 L 140.5 44.5 C 140.5 47.5 140.5 47.5 137.5 47.5 L 75.5 47.5 69.5 53.5 63.5 47.5 3.5 47.5 C 0.5 47.5 0.5 47.5 0.5 44.5 L 0.5 3.5 C 0.5 0.5 0.5 0.5 3.5 0.5" stroke="#000000" stroke-opacity="0.09999999999999999" stroke-width="3" transform="translate(1, 1)"></path><path fill="none" class="highcharts-label-box highcharts-tooltip-box highcharts-shadow" d="M 3.5 0.5 L 137.5 0.5 C 140.5 0.5 140.5 0.5 140.5 3.5 L 140.5 44.5 C 140.5 47.5 140.5 47.5 137.5 47.5 L 75.5 47.5 69.5 53.5 63.5 47.5 3.5 47.5 C 0.5 47.5 0.5 47.5 0.5 44.5 L 0.5 3.5 C 0.5 0.5 0.5 0.5 3.5 0.5" stroke="#000000" stroke-opacity="0.15" stroke-width="1" transform="translate(1, 1)"></path><path fill="rgba(247,247,247,0.85)" class="highcharts-label-box highcharts-tooltip-box" d="M 3.5 0.5 L 137.5 0.5 C 140.5 0.5 140.5 0.5 140.5 3.5 L 140.5 44.5 C 140.5 47.5 140.5 47.5 137.5 47.5 L 75.5 47.5 69.5 53.5 63.5 47.5 3.5 47.5 C 0.5 47.5 0.5 47.5 0.5 44.5 L 0.5 3.5 C 0.5 0.5 0.5 0.5 3.5 0.5" stroke="#7cb5ec" stroke-width="1"></path><text x="8" data-z-index="1" style="font-size:12px;color:#333333;cursor:default;fill:#333333;" y="20"><tspan style="font-size: 10px">13278.73</tspan><tspan style="fill:#7cb5ec" x="8" dy="15">●</tspan><tspan dx="0"> Temperature: </tspan><tspan style="font-weight:bold" dx="0">23.4</tspan></text></g></svg></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="page_box">
+                <div class="page_box_title"><img src="./TIM - Train Inspection Monorail_files/map_icon.png"><span>Trains position</span></div>
+                <div class="page_box_content ng-scope" ng-controller="tim_map">
+                    <canvas id="lhcmap" class="lhcmap" width="480" height="300">
+                        If you see this text, it means that your browser is not compatible with HTML5. Please update your browser or use a different one.
+                    </canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+	
+	<script>
+	$(document).ready(function(){
+		$('[data-toggle="tooltip"]').tooltip();   
+	});
+	</script>
+
+<div class="highslide-container" style="padding: 0px; border: none; margin: 0px; position: absolute; left: 0px; top: 0px; width: 100%; z-index: 1001; direction: ltr;"><a class="highslide-loading" title="Click to cancel" href="javascript:;" style="position: absolute; top: -9999px; opacity: 0.75; z-index: 1;">Loading...</a><div style="display: none;"></div><div class="highslide-viewport highslide-viewport-size" style="padding: 0px; border: none; margin: 0px; visibility: hidden;"></div><table cellspacing="0" style="padding: 0px; border: none; margin: 0px; visibility: hidden; position: absolute; border-collapse: collapse; width: 0px;"><tbody style="padding: 0px; border: none; margin: 0px;"><tr style="padding: 0px; border: none; margin: 0px; height: auto;"><td style="padding: 0px; border: none; margin: 0px; line-height: 0; font-size: 0px; background: url(&quot;https://timlhc.web.cern.ch/media/highslide/outlines/rounded-white.png&quot;) 0px 0px; height: 20px; width: 20px;"></td><td style="padding: 0px; border: none; margin: 0px; line-height: 0; font-size: 0px; background: url(&quot;https://timlhc.web.cern.ch/media/highslide/outlines/rounded-white.png&quot;) 0px -40px; height: 20px; width: 20px;"></td><td style="padding: 0px; border: none; margin: 0px; line-height: 0; font-size: 0px; background: url(&quot;https://timlhc.web.cern.ch/media/highslide/outlines/rounded-white.png&quot;) -20px 0px; height: 20px; width: 20px;"></td></tr><tr style="padding: 0px; border: none; margin: 0px; height: auto;"><td style="padding: 0px; border: none; margin: 0px; line-height: 0; font-size: 0px; background: url(&quot;https://timlhc.web.cern.ch/media/highslide/outlines/rounded-white.png&quot;) 0px -80px; height: 20px; width: 20px;"></td><td class="rounded-white highslide-outline" style="padding: 0px; border: none; margin: 0px; position: relative;"></td><td style="padding: 0px; border: none; margin: 0px; line-height: 0; font-size: 0px; background: url(&quot;https://timlhc.web.cern.ch/media/highslide/outlines/rounded-white.png&quot;) -20px -80px; height: 20px; width: 20px;"></td></tr><tr style="padding: 0px; border: none; margin: 0px; height: auto;"><td style="padding: 0px; border: none; margin: 0px; line-height: 0; font-size: 0px; background: url(&quot;https://timlhc.web.cern.ch/media/highslide/outlines/rounded-white.png&quot;) 0px -20px; height: 20px; width: 20px;"></td><td style="padding: 0px; border: none; margin: 0px; line-height: 0; font-size: 0px; background: url(&quot;https://timlhc.web.cern.ch/media/highslide/outlines/rounded-white.png&quot;) 0px -60px; height: 20px; width: 20px;"></td><td style="padding: 0px; border: none; margin: 0px; line-height: 0; font-size: 0px; background: url(&quot;https://timlhc.web.cern.ch/media/highslide/outlines/rounded-white.png&quot;) -20px -20px; height: 20px; width: 20px;"></td></tr></tbody></table><img src="./TIM - Train Inspection Monorail_files/rounded-white.png" style="padding: 0px; border: none; margin: 0px; position: absolute; top: -9999px;"></div></body></html>
